@@ -12,7 +12,7 @@ Dibuat sebagai project portofolio untuk mempelajari Python dari perspektif SRE/D
 |---|---|---|
 | Tahap 1 | Host Discovery (ping sweep via TCP connect) | ✅ Selesai |
 | Tahap 2 | Port Scanner (paralel + tabel output) | ✅ Selesai |
-| Tahap 3 | CLI Interface (argparse) | ⏳ Planned |
+| Tahap 3 | CLI Interface dengan argparse + validasi input | ✅ Selesai |
 | Tahap 4 | Export hasil ke JSON/CSV | ⏳ Planned |
 | Tahap 5 | Network Graph dengan NetworkX | ⏳ Planned |
 
@@ -43,7 +43,14 @@ cp .env.example .env
 ## Cara Pakai
 
 ```bash
-python main.py
+# Scan network range tertentu
+python main.py --network 192.168.1.0/24
+
+# Scan network lain
+python main.py --network 10.0.0.0/24
+
+# Lihat semua opsi
+python main.py --help
 ```
 
 ### Contoh Output
@@ -61,6 +68,12 @@ Ditemukan 2 host aktif.
 ├────────────┼────────────┼────────────┼─────────┤
 │ 80         │ tcp        │ OPEN       │ HTTP    │
 └────────────┴────────────┴────────────┴─────────┘
+
+### Contoh Error Validasi
+
+```
+main.py: error: Format network tidak valid: '192.168.1/24'.
+Gunakan format CIDR, contoh: 192.168.1.0/24
 ```
 
 ---
@@ -84,6 +97,7 @@ Pendekatan ini mirip dengan `nmap -sT` (TCP connect scan).
 - `ipaddress` — parsing CIDR network range
 - `concurrent.futures` — paralel port scanning dengan ThreadPoolExecutor
 - `rich` — output tabel berwarna di terminal
+- `argparse` — CLI interface dengan validasi input
 - `python-dotenv` — konfigurasi dari environment variable
 
 ---
