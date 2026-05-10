@@ -4,6 +4,8 @@ import concurrent.futures
 from rich.console import Console
 from rich.table import Table
 from rich import print as rprint
+import argparse
+
 
 # Dictionary port umum — key: nomor port, value: nama service
 COMMON_PORTS = {
@@ -89,11 +91,38 @@ def print_results(hosts: list[str]) -> None:
 
 
 # --- Main ---
-network_range = "192.168.1.0/24"
+def parse_args() -> argparse.Namespace:
+    """Parsing dan validasi argumen dari CLI."""
+    parser = argparse.ArgumentParser(
+        description="Network Topology Mapper — scan host aktif dan port terbuka",
+        epilog="Contoh: python main.py --network 192.168.1.0/24"
+    )
+    parser.add_argument(
+        "--network",
+        type=str,
+        required=True,
+        help="Network range dalam format CIDR (contoh: 192.168.1.0/24)"
+    )
 
-console.print(f"\n[bold]Scanning network[/bold] [cyan]{network_range}[/cyan]...\n")
+    args = parser.parse_args()
 
-hosts = scan_network(network_range)
-console.print(f"[green]Ditemukan {len(hosts)} host aktif.[/green]\n")
+    # Validasi format CIDR sebelum lanjut scan
+    try:
+        ipaddress.ip_network(args.network, strict=False)
+    except ValueError:
+        parser.error(f"Format network tidak valid: '{args.network}'. Gunakan format CIDR, contoh: 192.168.1.0/24")
 
-print_results(hosts)
+    return args
+
+
+
+if __name__ == "__main__":
+    args = parse_args()
+
+    console.print(f"\n[bold]Scanning network[/bold] [cyan]{args.network}[/cyan]...\n")
+
+    hosts = scan_network(args.network)
+    console.print(f"[green]Ditemukan {len(hosts)} host aktif.[/green]\n")
+
+    print_results(hosts)
+
