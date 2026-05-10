@@ -11,9 +11,9 @@ Dibuat sebagai project portofolio untuk mempelajari Python dari perspektif SRE/D
 | Tahap | Fitur | Status |
 |---|---|---|
 | Tahap 1 | Host Discovery (ping sweep via TCP connect) | ✅ Selesai |
-| Tahap 2 | Port Scanner | 🔄 In Progress |
-| Tahap 3 | Service Detection | ⏳ Planned |
-| Tahap 4 | Visual Topology & Report | ⏳ Planned |
+| Tahap 2 | Port Scanner (paralel + tabel output) | ✅ Selesai |
+| Tahap 3 | CLI Interface (argparse) | ⏳ Planned |
+| Tahap 4 | Export hasil ke JSON/CSV | ⏳ Planned |
 
 ---
 
@@ -41,21 +41,25 @@ cp .env.example .env
 
 ## Cara Pakai
 
-### Tahap 1 — Host Discovery
-
 ```bash
 python main.py
 ```
 
-### Contoh Output (Tahap 1)
+### Contoh Output
 
 ```
-Scanning 192.168.1.0/24...
-[+] 192.168.1.1   - ALIVE
-[+] 192.168.1.10  - ALIVE
-[+] 192.168.1.20  - ALIVE
+Scanning network 192.168.1.0/24...
 
-Scan complete. 3 host(s) found.
+Ditemukan 2 host aktif.
+
+                   192.168.1.1
+┏━━━━━━━━━━━━┳━━━━━━━━━━━━┳━━━━━━━━━━━━┳━━━━━━━━━┓
+┃ Port       ┃ Protocol   ┃ Status     ┃ Service ┃
+┡━━━━━━━━━━━━╇━━━━━━━━━━━━╇━━━━━━━━━━━━╇━━━━━━━━━┩
+│ 22         │ tcp        │ OPEN       │ SSH     │
+├────────────┼────────────┼────────────┼─────────┤
+│ 80         │ tcp        │ OPEN       │ HTTP    │
+└────────────┴────────────┴────────────┴─────────┘
 ```
 
 ---
@@ -75,8 +79,10 @@ Pendekatan ini mirip dengan `nmap -sT` (TCP connect scan).
 ## Tech Stack
 
 - Python 3.11+
-- `socket` — TCP connect untuk host discovery
+- `socket` — TCP connect untuk host discovery dan port scan
 - `ipaddress` — parsing CIDR network range
+- `concurrent.futures` — paralel port scanning dengan ThreadPoolExecutor
+- `rich` — output tabel berwarna di terminal
 - `python-dotenv` — konfigurasi dari environment variable
 
 ---
