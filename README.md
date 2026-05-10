@@ -14,6 +14,7 @@ Dibuat sebagai project portofolio untuk mempelajari Python dari perspektif SRE/D
 | Tahap 2 | Port Scanner (paralel + tabel output) | ✅ Selesai |
 | Tahap 3 | CLI Interface (argparse) | ⏳ Planned |
 | Tahap 4 | Export hasil ke JSON/CSV | ⏳ Planned |
+| Tahap 5 | Network Graph dengan NetworkX | ⏳ Planned |
 
 ---
 
