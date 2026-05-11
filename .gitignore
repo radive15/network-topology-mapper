@@ -31,3 +31,7 @@ htmlcov/
 # OS
 .DS_Store
 Thumbs.db
+
+# export
+scan_result_*.csv 
+scan_result_*.json

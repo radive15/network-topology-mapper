@@ -5,6 +5,9 @@ from rich.console import Console
 from rich.table import Table
 from rich import print as rprint
 import argparse
+import logging
+from src.exporter import export_json, export_csv
+from datetime import datetime
 
 
 # Dictionary port umum — key: nomor port, value: nama service
@@ -20,6 +23,9 @@ COMMON_PORTS = {
 }
 
 console = Console()
+logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
+logger = logging.getLogger(__name__)
+
 
 
 def is_host_alive(ip: str, port: int = 80, timeout: float = 1.0) -> bool:
@@ -68,26 +74,43 @@ def scan_network(net_range: str) -> list[str]:
     return active_hosts
 
 
-def print_results(hosts: list[str]) -> None:
-    """Tampilkan hasil scan dalam format tabel rich."""
+def collect_results(hosts: list[str]) -> list[dict]:
+    """
+    Scan port tiap host dan kumpulkan hasilnya sebagai data.
+
+    Returns:
+        List of dict, tiap dict berisi 'ip' dan 'ports' (list port terbuka)
+    """
+    results = []
+
     for host in hosts:
         ports = scan_ports(host)
+        results.append({
+            "ip": host,
+            "ports": ports  # sudah berupa list[dict] dari scan_ports()
+        })
 
-        # Buat tabel baru untuk tiap host
-        table = Table(title=f"[bold green]{host}[/bold green]", show_lines=True)
+    return results
+
+
+def print_results(results: list[dict]) -> None:
+    """Tampilkan hasil scan dalam format tabel rich."""
+    for item in results:
+        table = Table(title=f"[bold green]{item['ip']}[/bold green]", show_lines=True)
         table.add_column("Port", style="cyan", width=10)
         table.add_column("Protocol", style="white", width=10)
         table.add_column("Status", style="bold green", width=10)
         table.add_column("Service", style="yellow")
 
-        if ports:
-            for p in ports:
+        if item["ports"]:
+            for p in item["ports"]:
                 table.add_row(str(p["port"]), "tcp", "OPEN", p["service"])
         else:
             table.add_row("-", "-", "none", "tidak ada port terbuka")
 
         console.print(table)
         console.print()
+
 
 
 # --- Main ---
@@ -103,6 +126,13 @@ def parse_args() -> argparse.Namespace:
         required=True,
         help="Network range dalam format CIDR (contoh: 192.168.1.0/24)"
     )
+    parser.add_argument(
+    "--output",
+    type=str,
+    choices=["json", "csv"],
+    help="Export hasil scan ke file (pilihan: json, csv)"
+)
+
 
     args = parser.parse_args()
 
@@ -124,5 +154,19 @@ if __name__ == "__main__":
     hosts = scan_network(args.network)
     console.print(f"[green]Ditemukan {len(hosts)} host aktif.[/green]\n")
 
-    print_results(hosts)
+    results = collect_results(hosts)
+    print_results(results)
+
+    # Export jika flag --output diberikan
+    if args.output:
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        filename = f"scan_result_{timestamp}.{args.output}"
+
+        if args.output == "json":
+            export_json(results, filename)
+        elif args.output == "csv":
+            export_csv(results, filename)
+
+        console.print(f"\n[bold green]Hasil disimpan ke:[/bold green] {filename}")
+
 
