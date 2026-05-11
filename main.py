@@ -7,6 +7,7 @@ from rich import print as rprint
 import argparse
 import logging
 from src.exporter import export_json, export_csv
+from src.visualizer import generate_graph
 from datetime import datetime
 
 
@@ -131,7 +132,14 @@ def parse_args() -> argparse.Namespace:
     type=str,
     choices=["json", "csv"],
     help="Export hasil scan ke file (pilihan: json, csv)"
-)
+    )
+    parser.add_argument(
+    "--graph",
+    action="store_true",
+    help="Generate visualisasi network graph sebagai file PNG"
+    )
+
+    
 
 
     args = parser.parse_args()
@@ -168,5 +176,11 @@ if __name__ == "__main__":
             export_csv(results, filename)
 
         console.print(f"\n[bold green]Hasil disimpan ke:[/bold green] {filename}")
+    if args.graph:
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        graph_filename = f"network_graph_{timestamp}.png"
+        generate_graph(results, graph_filename)
+        console.print(f"[bold green]Graph disimpan ke:[/bold green] {graph_filename}")
+
 
 

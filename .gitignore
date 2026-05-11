@@ -35,3 +35,6 @@ Thumbs.db
 # export
 scan_result_*.csv 
 scan_result_*.json
+scan_result_*.json
+scan_result_*.csv
+network_graph_*.png
