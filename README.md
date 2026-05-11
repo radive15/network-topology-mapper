@@ -24,6 +24,9 @@ Dibuat sebagai project portofolio untuk mempelajari Python dari perspektif SRE/D
 | Tahap 3 | CLI Interface dengan argparse + validasi input | ✅ Selesai |
 | Tahap 4 | Export hasil ke JSON/CSV | ✅ Selesai |
 | Tahap 5 | Network Graph dengan NetworkX | ✅ Selesai |
+| Tahap 6 | Resolve Hostname via Reverse DNS | ⏳ Planned |
+| Tahap 7 | Service Banner Grabbing (deteksi versi software) | ⏳ Planned |
+| Tahap 8 | HTML Report (tabel + graph dalam satu file) | ⏳ Planned |
 
 ---
 
