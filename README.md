@@ -34,7 +34,7 @@ Dibuat sebagai project portofolio untuk mempelajari Python dari perspektif SRE/D
 
 ```bash
 # Clone repository
-git clone https://github.com/rifki/network-topology-mapper.git
+git clone https://github.com/radive15/network-topology-mapper.git
 cd network-topology-mapper
 
 # Buat dan aktifkan virtual environment
