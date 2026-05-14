@@ -1,15 +1,15 @@
+import concurrent.futures
 import socket
 import ipaddress
-import concurrent.futures
-from rich.console import Console
-from rich.table import Table
-from rich import print as rprint
 import argparse
 import logging
-from src.exporter import export_json, export_csv
-from src.visualizer import generate_graph
 from datetime import datetime
 
+from rich.console import Console
+from rich.table import Table
+
+from src.exporter import export_json, export_csv
+from src.visualizer import generate_graph
 
 # Dictionary port umum — key: nomor port, value: nama service
 COMMON_PORTS = {
@@ -28,14 +28,11 @@ logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
 logger = logging.getLogger(__name__)
 
 
-
 def is_host_alive(ip: str, port: int = 80, timeout: float = 1.0) -> bool:
     """Cek apakah host aktif dengan mencoba koneksi TCP ke port tertentu."""
-    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    s.settimeout(timeout)
-    result = s.connect_ex((ip, port))
-    s.close()
-    return result == 0
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+        s.settimeout(timeout)
+        return s.connect_ex((ip, port)) == 0
 
 
 def scan_ports(ip: str) -> list[dict]:
@@ -113,8 +110,6 @@ def print_results(results: list[dict]) -> None:
         console.print()
 
 
-
-# --- Main ---
 def parse_args() -> argparse.Namespace:
     """Parsing dan validasi argumen dari CLI."""
     parser = argparse.ArgumentParser(
@@ -128,20 +123,18 @@ def parse_args() -> argparse.Namespace:
         help="Network range dalam format CIDR (contoh: 192.168.1.0/24)"
     )
     parser.add_argument(
-    "--output",
-    type=str,
-    choices=["json", "csv"],
-    help="Export hasil scan ke file (pilihan: json, csv)"
+        "--output",
+        type=str,
+        choices=["json", "csv"],
+        help="Export hasil scan ke file (pilihan: json, csv)"
     )
     parser.add_argument(
-    "--graph",
-    action="store_true",
-    help="Generate visualisasi network graph sebagai file PNG"
+        "--graph",
+        action="store_true",
+        help="Generate visualisasi network graph sebagai file PNG"
     )
 
     
-
-
     args = parser.parse_args()
 
     # Validasi format CIDR sebelum lanjut scan
@@ -151,7 +144,6 @@ def parse_args() -> argparse.Namespace:
         parser.error(f"Format network tidak valid: '{args.network}'. Gunakan format CIDR, contoh: 192.168.1.0/24")
 
     return args
-
 
 
 if __name__ == "__main__":

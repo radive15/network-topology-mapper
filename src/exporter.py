@@ -22,7 +22,7 @@ def export_json(results: list[dict], output_path: str) -> None:
     }
 
     try:
-        with open(output_path, "w") as f:
+        with open(output_path, "w", encoding="utf-8") as f:
             json.dump(payload, f, indent=2)
         logger.info(f"Hasil disimpan ke {output_path}")
     except OSError as e:
@@ -42,7 +42,7 @@ def export_csv(results: list[dict], output_path: str) -> None:
     fieldnames = ["ip", "port", "service"]
 
     try:
-        with open(output_path, "w", newline="") as f:
+        with open(output_path, "w", encoding="utf-8") as f:
             writer = csv.DictWriter(f, fieldnames=fieldnames)
             writer.writeheader()
 

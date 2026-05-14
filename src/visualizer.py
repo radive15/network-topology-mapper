@@ -46,17 +46,17 @@ def generate_graph(results: list[dict], output_path: str = "network_graph.png") 
 
 
     nx.draw(
-    G, pos,
-    labels=labels,
-    with_labels=True,
-    node_color=node_colors,
-    node_size=3000,        # ← naikan dari 2000
-    font_size=8,
-    font_color="white",
-    font_weight="bold",    # ← tambah ini supaya lebih terbaca
-    edge_color="gray",
-    width=2,               # ← edge lebih tebal
-)
+        G, pos,
+        labels=labels,
+        with_labels=True,
+        node_color=node_colors,
+        node_size=3000,        # ← naikan dari 2000
+        font_size=8,
+        font_color="white",
+        font_weight="bold",    # ← tambah ini supaya lebih terbaca
+        edge_color="gray",
+        width=2,               # ← edge lebih tebal
+    )
 
 
     plt.title("Network Topology Map", fontsize=14, fontweight="bold")
